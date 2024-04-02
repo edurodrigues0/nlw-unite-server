@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:3333
+
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "title": "Unite Summit 2",
+  "details": "Um evento para quem é apaixonado por programação",
+  "maximumAttendees": 100
+}
+
+###
+
+GET {{baseUrl}}/events?page=1
+Content-Type: application/json
+
+###
+
+GET {{baseUrl}}/events/8e124296-b11e-4c57-a571-7bda84b9f06c
+Content-Type: application/json
+
+###
+
+PUT {{baseUrl}}/events/8e124296-b11e-4c57-a571-7bda84b9f06c
+Content-Type: application/json
+
+{
+  "details": "Um evento para quem é maluco por programação!",
+  "maximumAttendees": 1000
+}
+
+###
+
+DELETE {{baseUrl}}/events/bd7b1e86-c9bb-4d59-9d57-264477764436
+Content-Type: application/json
