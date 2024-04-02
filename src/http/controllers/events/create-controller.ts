@@ -1,7 +1,7 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { prisma } from "../../../services/prisma";
-import z from "zod";
-import { generateSlug } from "../../../utils/generate-slug";
+import { FastifyReply, FastifyRequest } from 'fastify'
+import { prisma } from '../../../services/prisma'
+import z from 'zod'
+import { generateSlug } from '../../../utils/generate-slug'
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
   const createEventSchema = z.object({
@@ -10,9 +10,21 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     maximumAttendees: z.number().int().positive().nullable(),
   })
 
-  const { title, details, maximumAttendees} = createEventSchema.parse(request.body)
+  const { title, details, maximumAttendees } = createEventSchema.parse(
+    request.body,
+  )
 
   const slug = generateSlug(title)
+
+  const eventWithSameSlug = await prisma.event.findUnique({
+    where: {
+      slug,
+    },
+  })
+
+  if (eventWithSameSlug) {
+    throw new Error('Another event with same title already exists.')
+  }
 
   const event = await prisma.event.create({
     data: {
@@ -20,10 +32,10 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
       details,
       maximumAttendees,
       slug,
-    }
+    },
   })
 
   return reply.status(201).send({
-    event_id: event.id
+    event_id: event.id,
   })
 }
