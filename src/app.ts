@@ -1,11 +1,18 @@
 import fastify from 'fastify'
-import { eventsRoutes } from './http/controllers/events/routes'
 import { env } from 'process'
 import { ZodError } from 'zod'
+import {
+  validatorCompiler,
+  serializerCompiler,
+} from 'fastify-type-provider-zod'
+import { EventRoutes } from './http/routes/events/routes'
 
 export const app = fastify()
 
-app.register(eventsRoutes)
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
+app.register(EventRoutes)
 
 app.setErrorHandler((error, _ /* request */, reply) => {
   if (error instanceof ZodError) {
