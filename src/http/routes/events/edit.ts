@@ -9,6 +9,8 @@ export async function edit(app: FastifyInstance) {
     '/events/:eventId',
     {
       schema: {
+        summary: 'Edit an event',
+        tags: ['events'],
         params: z.object({
           eventId: z.string(),
         }),

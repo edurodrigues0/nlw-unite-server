@@ -8,8 +8,10 @@ export async function list(app: FastifyInstance) {
     '/events',
     {
       schema: {
+        summary: 'List events',
+        tags: ['events'],
         querystring: z.object({
-          page: z.coerce.number(),
+          page: z.string().nullable().default('1').transform(Number),
         }),
         response: {
           200: z.object({

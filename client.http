@@ -1,57 +1,35 @@
 @baseUrl = http://localhost:3333
 
-# Create Event
 POST {{baseUrl}}/events
 Content-Type: application/json
 
 {
-  "title": "NLW Return",
-  "details": "",
-  "maximumAttendees": 1000
+  "title": "Sunset coding 1.0",
+  "details": null,
+  "maximumAttendees": 1
 }
 
 ###
 
-# List Event
-GET {{baseUrl}}/events?page=1
-Content-Type: application/json
-
-###
-
-# Get Event
-GET {{baseUrl}}/events/1fa8e025-8b90-4250-bfae-1301ec2a8fed
-
-###
-
-# Edit Event
-PUT {{baseUrl}}/events/0a7b61fe-9de2-4a96-acd4-aca04229e954
-Content-Type: application/json
-
-{
-  "details": "Um evento para quem é maluco por programação!",
-  "maximumAttendees": 1000
-}
-
-###
-
-# Delete Event
-DELETE {{baseUrl}}/events/0a7b61fe-9de2-4a96-acd4-aca04229e954
-Content-Type: application/json
-
-###
-
-# Register In Event
-POST {{baseUrl}}/events/1fa8e025-8b90-4250-bfae-1301ec2a8fed/attendees
+POST {{baseUrl}}/events/81a3f6db-45bf-4a6f-b10c-bcaf8837ac43/attendees
 Content-Type: application/json
 
 {
   "name": "Eduardo Rodrigues",
-  "email": "eduardo3@example.com"
+  "email": "eduardo@example.com"
 }
 
 ###
 
-# Get Attendee Badge
-GET {{baseUrl}}/attendees/3/badge
-Content-Type: application/json
+GET {{baseUrl}}/events/81a3f6db-45bf-4a6f-b10c-bcaf8837ac43
+
 ###
+
+GET {{baseUrl}}/attendees/3/badge
+###
+
+GET {{baseUrl}}/attendees/4/check-in
+
+###
+
+GET {{baseUrl}}/events/81a3f6db-45bf-4a6f-b10c-bcaf8837ac43/attendees?query=diego

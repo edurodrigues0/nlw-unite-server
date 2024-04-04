@@ -9,17 +9,18 @@ export async function getAttendeeBadge(app: FastifyInstance) {
     '/attendees/:attendeeId/badge',
     {
       schema: {
+        summary: 'Get an attendee badge',
+        tags: ['attendees'],
         params: z.object({
           attendeeId: z.coerce.number().int(),
         }),
         response: {
           200: z.object({
-            attendee: z.object({
+            badge: z.object({
               name: z.string(),
-              email: z.string(),
-              event: z.object({
-                title: z.string(),
-              }),
+              email: z.string().email(),
+              event_title: z.string(),
+              check_in_url: z.string().url(),
             }),
           }),
           404: z.object({
@@ -51,8 +52,17 @@ export async function getAttendeeBadge(app: FastifyInstance) {
           throw new AttendeesNotFoundError()
         }
 
+        const baseURL = `${request.protocol}://${request.hostname}`
+
+        const checkInURL = new URL(`/attendees/${attendeeId}/check-in`, baseURL)
+
         return reply.status(200).send({
-          attendee,
+          badge: {
+            name: attendee.name,
+            email: attendee.email,
+            event_title: attendee.event.title,
+            check_in_url: checkInURL.toString(),
+          },
         })
       } catch (error) {
         if (error instanceof AttendeesNotFoundError) {

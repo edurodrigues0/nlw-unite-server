@@ -9,11 +9,13 @@ export async function remove(app: FastifyInstance) {
     '/events/:eventId',
     {
       schema: {
+        summary: 'Delete an event',
+        tags: ['events'],
         params: z.object({
           eventId: z.string().uuid(),
         }),
         response: {
-          200: {},
+          200: z.null(),
           404: z.object({
             message: z.string(),
           }),
