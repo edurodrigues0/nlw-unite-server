@@ -11,6 +11,7 @@ export async function list(app: FastifyInstance) {
         summary: 'List events',
         tags: ['events'],
         querystring: z.object({
+          query: z.string().optional(),
           page: z.string().nullable().default('1').transform(Number),
         }),
         response: {
@@ -19,7 +20,10 @@ export async function list(app: FastifyInstance) {
               z.object({
                 id: z.string().uuid(),
                 title: z.string(),
+                details: z.string().nullish(),
                 slug: z.string(),
+                maximum_attendee: z.number().int().nullish(),
+                attendee_registered: z.number().int().nullish(),
               }),
             ),
           }),
@@ -27,20 +31,42 @@ export async function list(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { page } = request.query
+      const { page, query } = request.query
 
       const events = await prisma.event.findMany({
+        where: {
+          title: {
+            contains: query,
+            mode: 'insensitive',
+          },
+        },
         select: {
           id: true,
           title: true,
           slug: true,
+          details: true,
+          maximumAttendees: true,
+          _count: {
+            select: {
+              attendees: true,
+            },
+          },
         },
         take: 20,
         skip: (page - 1) * 20,
       })
 
       return reply.status(200).send({
-        events,
+        events: events.map((event) => {
+          return {
+            id: event.id,
+            title: event.title,
+            details: event.details,
+            slug: event.slug,
+            maximum_attendee: event.maximumAttendees,
+            attendee_registered: event._count.attendees,
+          }
+        }),
       })
     },
   )

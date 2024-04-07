@@ -28,6 +28,11 @@ export async function list(app: FastifyInstance) {
                 check_in_at: z.date().nullable(),
               }),
             ),
+            pagination: z.object({
+              pageIndex: z.number(),
+              totalItems: z.number(),
+              pageItems: z.number(),
+            }),
           }),
         },
       },
@@ -59,11 +64,25 @@ export async function list(app: FastifyInstance) {
             },
           },
         },
-        take: 20,
-        skip: (page - 1) * 20,
+        take: 10,
+        skip: (page - 1) * 10,
         orderBy: {
           createdAt: 'desc',
         },
+      })
+
+      const totalItems = await prisma.attendee.count({
+        where: query
+          ? {
+              eventId,
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            }
+          : {
+              eventId,
+            },
       })
 
       return reply.status(200).send({
@@ -76,6 +95,11 @@ export async function list(app: FastifyInstance) {
             check_in_at: attendee.checkIn?.createdAt ?? null,
           }
         }),
+        pagination: {
+          totalItems,
+          pageIndex: page,
+          pageItems: 10,
+        },
       })
     },
   )
